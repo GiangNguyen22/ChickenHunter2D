@@ -208,15 +208,30 @@ public class SceneSetupTool
         cam.orthographicSize = 5f;
         cam.backgroundColor = new Color(0.03f, 0.03f, 0.06f, 1f);
 
-        // ---- Static background (background_1, no seam) ----
-        GameObject bg = new GameObject("Background");
-        Sprite bgSprite = LoadSprite("background_1.png");
+        // ---- Scrolling background (two stacked tiles, moves down) ----
+        Sprite bgSprite = LoadSprite("background_scroll.jpg");
         if (bgSprite == null)
-            UnityEngine.Debug.LogWarning("[Chicken Hunter] Khong tim thay background_1.png - nen transparent!");
-        SpriteRenderer bgSr = bg.AddComponent<SpriteRenderer>();
-        bgSr.sprite = bgSprite;
-        bgSr.sortingOrder = 0;
-        FitBackground(bgSr, cam, 20f);
+            UnityEngine.Debug.LogWarning("[Chicken Hunter] Khong tim thay background_scroll.jpg - nen transparent!");
+
+        GameObject bgRoot = new GameObject("Background");
+        GameObject tileA = new GameObject("TileA");
+        tileA.transform.SetParent(bgRoot.transform, false);
+        SpriteRenderer bgSrA = tileA.AddComponent<SpriteRenderer>();
+        bgSrA.sprite = bgSprite;
+        bgSrA.sortingOrder = 0;
+        FitBackground(bgSrA, cam, 20f);
+
+        GameObject tileB = new GameObject("TileB");
+        tileB.transform.SetParent(bgRoot.transform, false);
+        SpriteRenderer bgSrB = tileB.AddComponent<SpriteRenderer>();
+        bgSrB.sprite = bgSprite;
+        bgSrB.sortingOrder = 0;
+        FitBackground(bgSrB, cam, 20f);
+
+        ScrollingBackground scroll = bgRoot.AddComponent<ScrollingBackground>();
+        scroll.tileA = tileA.transform;
+        scroll.tileB = tileB.transform;
+        scroll.scrollSpeed = 1.5f;
 
         // ---- Player (Object A) at center-bottom, nose up ----
         Sprite playerSprite = LoadSprite("shipMain.png");
@@ -375,7 +390,7 @@ public class SceneSetupTool
         bannerText.color = new Color(1f, 0.9f, 0.2f, 0f);
 
         // ---- Pause button ----
-        Button pauseBtn = CreateIconButton(hud, "PauseButton", pauseSprite, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(90, 90), new Vector2(-50, -40));
+        Button pauseBtn = CreateIconButton(hud, "PauseButton", pauseSprite, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(96, 96), new Vector2(-140, -140));
 
         // ---- Ready panel ----
         GameObject readyPanel = CreateUIRect(hud, "ReadyPanel", new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
